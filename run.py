@@ -1,0 +1,3 @@
+"""
+O iniciador da aplicação.
+"""
