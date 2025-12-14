@@ -215,5 +215,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-/.vscode
-anotações.txt
+/.vscode/
+/anotações.txt
+src/test_musics/
