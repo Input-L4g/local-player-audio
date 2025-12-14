@@ -56,3 +56,5 @@ DEFAULT_PLAYER_OPTIONS: PlayerOptions = {
     "mute": False,
     "audio_output": DEFAULT_MPV_CONFIG["ao"]
 }
+
+MPV_LOGLEVELS_ERRORS = ("error", "fatal")
