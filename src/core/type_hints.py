@@ -2,9 +2,15 @@
 Esse módulo contém as tipagens estáticas usadas
 em todo a aplicação.
 """
-from typing import TypedDict, Literal, Optional
+from typing import TypedDict, Literal, Optional, TypeAlias, Union
+from pathlib import Path
 
-
+VolumeType: TypeAlias = int
+MuteType: TypeAlias = bool
+SpeedRateType: TypeAlias = float
+AudioOutputType: TypeAlias = Optional[str]
+AudioChannelType: TypeAlias = Literal["stereo", "mono", "auto"]
+AudioPathType: TypeAlias = Union[str, Path]
 
 class PlayerOptions(TypedDict):
     """
@@ -16,15 +22,30 @@ class PlayerOptions(TypedDict):
     - audio_device: str -> Dispositivo de saída de som, decidido pelo sistema ou manualmente.
     - audio_channels: str -> Canal de áudio, só pode ser "mono", "stereo", "auto", default "auto".
     """
-    volume: int
-    mute: bool
-    speed_rate: float
-    audio_device: Optional[str]
-    audio_channels: Literal["stereo", "mono", "auto"]
+    volume: VolumeType
+    mute: MuteType
+    speed_rate: SpeedRateType
+    audio_output: AudioOutputType
+    audio_channel: AudioChannelType
 
-class InitialPlayerOptions(PlayerOptions, total=False):
+class InitialPlayerOptions(TypedDict, total=False):
     """
     Representa um dicionário tipado com
     as configurações iniciais aplicadas
     ao criar uma instância de Player.
     """
+    volume: VolumeType
+    mute: MuteType
+    speed_rate: SpeedRateType
+    audio_output: AudioOutputType
+    audio_channel: AudioChannelType
+    debug: bool # Modo debug
+
+class PlayerProperties(TypedDict, total=True):
+    """Um dicionário tipado representando as propriedades internas do Player"""
+    volume: VolumeType
+    mute: MuteType
+    speed_rate: SpeedRateType
+    audio_output: AudioOutputType
+    audio_channel: AudioChannelType
+    debug: bool # Modo debug
