@@ -3,7 +3,7 @@ Esse módulo contém a classe
 Player, o motor de áudio da aplicação.
 """
 from typing import Unpack
-from rich import print
+from rich import print as rprint
 from src.core.type_hints import (
     # PlayerOptions,
     InitialPlayerOptions,
@@ -11,7 +11,11 @@ from src.core.type_hints import (
     AudioPathType, PlayerProperties
 )
 from src.mpv import mpv
-from src.core.config import DEFAULT_PLAYER_OPTIONS, DEFAULT_MPV_CONFIG
+from src.core.config import (
+    DEFAULT_PLAYER_OPTIONS,
+    DEFAULT_MPV_CONFIG,
+    MPV_LOGLEVELS_ERRORS
+)
 from src.exceptions.player_exception import InvalidAudioChannelError
 
 
@@ -61,7 +65,7 @@ class Player:
 
     @volume.setter
     def volume(self, value: VolumeType) -> None:
-        value = max(0, min(value, DEFAULT_MPV_CONFIG["max-volume"]))
+        value = max(0, min(value, DEFAULT_MPV_CONFIG["volume-max"]))
         self._properties["volume"] = value
         self._player.volume = self._properties["volume"]
 
@@ -88,7 +92,7 @@ class Player:
         if channel not in options:
             raise InvalidAudioChannelError(channel, options)
         self._properties["audio_channel"] = channel
-        self._player.audio_channel
+        self._player.audio_channel = self._properties["audio_channel"]
 
     def play(self, audio_path: AudioPathType) -> None:
         """Começa a reprodução de um áudio."""
@@ -104,7 +108,17 @@ class Player:
         """Despausa a reprodução atual."""
         self._player.pause = False
 
-    def _mpv_handler_log(self, loglevel, component, message) -> None:
+    def wait_for_playback(self) -> None:
+        """Não deixa o Python finalizar até a reprodução acabar."""
+        self._player.wait_for_playback()
+
+    def _mpv_handler_log(self, loglevel: str, component: str, message: str) -> None:
         """Handler que imprime um log do MPV em execução."""
         if self.debug:
-            print(f"[bold][{loglevel}][/bold] [blue]{component}[/blue]: {message}")
+            if self._is_log_error(loglevel):
+                loglevel = loglevel.upper()
+            print(f"[{loglevel}] {component}: {message}".strip())
+
+    def _is_log_error(self, loglevel: str) -> bool:
+        """Verifica se um `loglevel` do MPV indica um erro."""
+        return loglevel in MPV_LOGLEVELS_ERRORS
