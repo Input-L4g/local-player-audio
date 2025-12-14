@@ -1,4 +1,4 @@
 """
-Esse módulo contém funcões utilitárias para
+Esse módulo contém funções utilitárias para
 exceções e validações.
 """
