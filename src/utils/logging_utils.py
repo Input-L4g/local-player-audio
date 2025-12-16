@@ -6,11 +6,13 @@ from pathlib import Path
 from logging import getLogger, FileHandler, Formatter, StreamHandler, DEBUG
 from src.core.type_hints import LoggingLevel
 from src.core.config import LOGGING_PATH_OUTPUT
+from src.utils.files_utils import clear_file
 
 formatter = Formatter(
     "[%(asctime)s] [%(levelname)s] (%(name)s): %(message)s"
 )
 file_handlers = {}
+logger_has_cleared_file = {}
 
 def _output_folder(filename: str) -> str:
     path = Path(LOGGING_PATH_OUTPUT) / filename
@@ -24,7 +26,8 @@ def log(
     message: str,
     level: LoggingLevel,
     logger_name: str,
-    output: bool = False
+    output: bool = False,
+    clear_old_log: bool = False
 ) -> None:
     """
     Gera e salva um log.
@@ -44,8 +47,12 @@ def log(
         logger.addHandler(handler)
     elif file_handlers.get(output) is None:
         output_file_name = _normalize_output_name(logger_name)
-        handler = FileHandler(_output_folder(output_file_name), encoding="utf-8")
+        output_path = _output_folder(output_file_name)
+        handler = FileHandler(output_path, encoding="utf-8")
         handler.setFormatter(formatter)
-        file_handlers[output] = handler
+        file_handlers[logger] = handler
         logger.addHandler(handler)
+        if clear_old_log and logger_has_cleared_file.get(logger) is not True:
+            clear_file(output_path)
+            logger_has_cleared_file[logger] = True
     method(message)
