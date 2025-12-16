@@ -83,6 +83,14 @@ class Playlist:
         """
         return next((track for track in self if track.id == track_id), None)
 
+    def get_all(self, in_original_pos: bool = False) -> List[Track]:
+        """Retorna todas as trilhas nas respectivas posições."""
+        tracks = self._tracks[:]
+        if in_original_pos:
+            tracks_by_id = {track.id: track for track in self}
+            return [tracks_by_id[id_] for id_ in self._tracks_ids]
+        return tracks
+
     def has_track(self, track: Track, raises: Optional[Exception] = None) -> bool:
         """Verifica se tem uma trilha na playlist."""
         self._log_handler(f"Verificando a trilha ({track}) (raise: {raises})", "debug")
