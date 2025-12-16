@@ -58,3 +58,11 @@ DEFAULT_PLAYER_OPTIONS: PlayerOptions = {
 }
 
 MPV_LOGLEVELS_ERRORS = ("error", "fatal")
+
+LOGGING_SCOPES = {
+    "playlist": "core.playlist",
+    "player": "core.player",
+    "controller": "core.controller"
+}
+
+LOGGING_PATH_OUTPUT= "./log"
