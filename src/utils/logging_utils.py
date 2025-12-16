@@ -2,3 +2,45 @@
 Esse módulo contém funções utilitárias
 referentes a logging.
 """
+from pathlib import Path
+from logging import getLogger, FileHandler, Formatter
+from src.core.type_hints import LoggingLevel
+from src.core.config import LOGGING_PATH_OUTPUT
+
+formatter = Formatter(
+    "[%(asctime)s] [%(levelname)s] (%(name)s): %(message)s"
+)
+file_handlers = {}
+
+def _output_folder(filename: str) -> str:
+    path = Path(LOGGING_PATH_OUTPUT) / filename
+    return str(path)
+
+def _normalize_output_name(output_name: str) -> str:
+    path = output_name.replace(".", "_") + ".log"
+    return path
+
+def log(
+    message: str,
+    level: LoggingLevel,
+    logger_name: str,
+    output: bool = False
+) -> None:
+    """
+    Gera e salva um log.
+
+    Se `output` for False, enviará ao terminal,
+    caso contrário, num arquivo em *./log/**logger_name**.log*
+    """
+    logger = getLogger(logger_name)
+    try:
+        method = getattr(logger, level)
+    except AttributeError:
+        raise AttributeError(f"O level de log é inválido: {level}") from None
+    if output is True and file_handlers.get(output) is None:
+        output_file_name = _normalize_output_name(logger_name)
+        handler = FileHandler(_output_folder(output_file_name), encoding="utf-8")
+        handler.setFormatter(formatter)
+        file_handlers[output] = handler
+        logger.addHandler(handler)
+    method(message)
