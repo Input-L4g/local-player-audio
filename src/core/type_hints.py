@@ -55,3 +55,5 @@ PlaylistModes = Literal[
     "loop", # Loop infinito
     "one_repeat" # Loop em apenas uma trilha
 ]
+
+LoggingLevel = Literal["info", "debug", "warning", "error"]
