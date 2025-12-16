@@ -50,3 +50,8 @@ class PlayerProperties(TypedDict, total=True):
     audio_output: AudioOutputType
     audio_channel: AudioChannelType
     debug: bool # Modo debug
+
+PlaylistModes = Literal[
+    "loop", # Loop infinito
+    "one_repeat" # Loop em apenas uma trilha
+]
