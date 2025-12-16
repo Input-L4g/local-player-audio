@@ -57,12 +57,12 @@ class Playlist:
     def __init__(
         self, mode: PlaylistModes = "loop", *, debug: bool = False) -> None:
         """Inicializa a classe Playlist."""
+        self.debug = debug
         self._log_handler("Instânciando Playlist", "debug")
         self._tracks = []
         self._tracks_ids = []
         self.current_index = None
         self.mode = mode
-        self.debug = debug
 
     def _log_handler(self, message: str, level: LoggingLevel) -> None:
         """Handler que gera logs somente em modo debug."""
