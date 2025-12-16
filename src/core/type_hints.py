@@ -11,6 +11,7 @@ SpeedRateType: TypeAlias = float
 AudioOutputType: TypeAlias = Optional[str]
 AudioChannelType: TypeAlias = Literal["stereo", "mono", "auto"]
 AudioPathType: TypeAlias = Union[str, Path]
+AudioSourceType = Literal["local"]
 
 class PlayerOptions(TypedDict):
     """
