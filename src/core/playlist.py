@@ -75,6 +75,14 @@ class Playlist:
         self._tracks.clear()
         self._tracks_ids.clear()
 
+    def get_by_id(self, track_id: str) -> Optional[Track]:
+        """
+        Procura e pega uma trilha por id.
+
+        Se não encontrada, retorna None
+        """
+        return next((track for track in self if track.id == track_id), None)
+
     def has_track(self, track: Track, raises: Optional[Exception] = None) -> bool:
         """Verifica se tem uma trilha na playlist."""
         self._log_handler(f"Verificando a trilha ({track}) (raise: {raises})", "debug")
