@@ -3,7 +3,7 @@ Esse módulo contém funções utilitárias
 referentes a logging.
 """
 from pathlib import Path
-from logging import getLogger, FileHandler, Formatter
+from logging import getLogger, FileHandler, Formatter, StreamHandler, DEBUG
 from src.core.type_hints import LoggingLevel
 from src.core.config import LOGGING_PATH_OUTPUT
 
@@ -33,11 +33,16 @@ def log(
     caso contrário, num arquivo em *./log/**logger_name**.log*
     """
     logger = getLogger(logger_name)
+    logger.setLevel(DEBUG)
     try:
         method = getattr(logger, level)
     except AttributeError:
-        raise AttributeError(f"O level de log é inválido: {level}") from None
-    if output is True and file_handlers.get(output) is None:
+        raise AttributeError(f"O 'level' de log é inválido: {level}") from None
+    if output is False:
+        handler = StreamHandler()
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    elif file_handlers.get(output) is None:
         output_file_name = _normalize_output_name(logger_name)
         handler = FileHandler(_output_folder(output_file_name), encoding="utf-8")
         handler.setFormatter(formatter)
