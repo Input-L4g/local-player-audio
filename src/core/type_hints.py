@@ -2,15 +2,16 @@
 Esse módulo contém as tipagens estáticas usadas
 em todo a aplicação.
 """
-from typing import TypedDict, Literal, Optional, TypeAlias, Union
 from pathlib import Path
+
+PathType: TypeAlias = Union[str, Path]
 
 VolumeType: TypeAlias = int
 MuteType: TypeAlias = bool
 SpeedRateType: TypeAlias = float
 AudioOutputType: TypeAlias = Optional[str]
 AudioChannelType: TypeAlias = Literal["stereo", "mono", "auto"]
-AudioPathType: TypeAlias = Union[str, Path]
+AudioPathType: TypeAlias = PathType
 AudioSourceType = Literal["local"]
 
 class PlayerOptions(TypedDict):
