@@ -12,8 +12,6 @@ def increment_index(
     Incrementa em um index mantendo-o no tamanho da lista.
     Valores positivos incrementam, negativos decrementam.
     """
-    if increment_value > 0:
+    if increment_value > 0: # incrementa
         return (index + increment_value) % len_list
-    if increment_value < 0:
-        return (len_list + increment_value) % len_list
-    return index
+    return (index + increment_value) % len_list # decrementa
