@@ -44,18 +44,19 @@ def log(
         method = getattr(logger, level)
     except AttributeError:
         raise AttributeError(f"O 'level' de log é inválido: {level}") from None
-    if output is False:
-        handler = StreamHandler()
-        handler.setFormatter(formatter)
+    if not logger.handlers:
+        if output is False:
+            handler = DEFAULT_STREAM_HANDLER
+        else:
+            output_file_name = _normalize_output_name(logger_name)
+            output_path = _output_folder(output_file_name)
+            handler = FileHandler(output_path, encoding="utf-8")
+            handler.setFormatter(formatter)
         logger.addHandler(handler)
-    elif file_handlers.get(output) is None:
+    else:
         output_file_name = _normalize_output_name(logger_name)
         output_path = _output_folder(output_file_name)
-        handler = FileHandler(output_path, encoding="utf-8")
-        handler.setFormatter(formatter)
-        file_handlers[logger] = handler
-        logger.addHandler(handler)
-        if clear_old_log and logger_has_cleared_file.get(logger) is not True:
-            clear_file(output_path)
-            logger_has_cleared_file[logger] = True
+    if clear_old_log and output is True and not logger_files.get(logger_name, False):
+        clear_file(output_path)
+        logger_files[logger_name] = True
     method(message)
