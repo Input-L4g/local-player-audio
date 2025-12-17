@@ -194,6 +194,7 @@ class Playlist:
         new_index = increment_index(self.current_index, len(self), -1)
         return self[new_index], new_index
 
+    def next(self, force_next: bool = False) -> Optional[Track]:
         """
         Passa para a próxima trilha na playlist.
 
