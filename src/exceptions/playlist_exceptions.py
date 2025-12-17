@@ -25,3 +25,10 @@ class PlaylistEmptyError(Exception):
         self.type = "PlaylistEmptyError"
         self.message: str = "A playlist está vazia."
         super().__init__(self.message)
+
+class InvalidPlaylistModeError(Exception):
+    """Representa uma exceção quando definir ou avaliar um modo inválido da playlist."""
+    def __init__(self, entry: str) -> None:
+        self.type = "InvalidPlaylistModeError"
+        self.message: str = f"O modo {entry} é inválido. Era esperado um de {PLAYLIST_MODES}"
+        super().__init__(self.message)
