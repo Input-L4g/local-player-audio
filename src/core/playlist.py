@@ -6,21 +6,27 @@ localmente.
 """
 from dataclasses import dataclass, field
 from uuid import uuid4
-from typing import Optional, List, Iterator, Tuple
+from typing import Optional, List, Iterator, Tuple, Unpack, Union
 from src.core.type_hints import (
     AudioPathType,
     AudioSourceType,
     PlaylistModes,
-    LoggingLevel
+    LoggingLevel,
+    PlaylistDebugOptions,
+    PlaylistDebugConfig
 )
 from src.exceptions.playlist_exceptions import (
     TrackExistsError,
     TrackNotExistsError,
-    PlaylistEmptyError
+    InvalidPlaylistModeError
+    # PlaylistEmptyError
 )
 from src.utils.operations_utils import increment_index
 from src.utils.logging_utils import log
-from src.core.config import LOGGING_SCOPES
+from src.core.config import LOGGING_SCOPES, PLAYLIST_MODES
+
+_LOGGING_SCOPE = "playlist"
+
 
 @dataclass(eq=False, slots=True)
 class Track:
@@ -51,23 +57,44 @@ class Playlist:
     _tracks: List[Track]
     _tracks_ids: List[str]
     current_index: Optional[int]
-    mode: PlaylistModes
+    _mode: PlaylistModes
     debug: bool
+    debug_config: PlaylistDebugConfig
 
     def __init__(
-        self, mode: PlaylistModes = "loop", *, debug: bool = False) -> None:
+        self,
+        mode: PlaylistModes = "loop",
+        *,
+        debug: bool = False,
+        **debug_options: Unpack[PlaylistDebugOptions]
+    ) -> None:
         """Inicializa a classe Playlist."""
         self.debug = debug
-        self._log_handler("Instânciando Playlist", "debug")
+        default_debug_config: PlaylistDebugConfig = {
+                "log_in_file": True,
+                "clear_old_log": True,
+                "allowed_logging_levels": ("info", "debug", "warning", "error", "critical")
+            }
+        self.debug_config = {
+            **default_debug_config,
+            **debug_options # Configuração aplicada
+        }
+        self._log_handler("Instanciando Playlist", "debug")
         self._tracks = []
         self._tracks_ids = []
         self.current_index = None
-        self.mode = mode
+        self._mode = mode
 
     def _log_handler(self, message: str, level: LoggingLevel) -> None:
         """Handler que gera logs somente em modo debug."""
-        if self.debug:
-            log(message, level, LOGGING_SCOPES["playlist"])
+        if self.debug and level in self.debug_config["allowed_logging_levels"]:
+            log(
+                message,
+                level,
+                LOGGING_SCOPES[_LOGGING_SCOPE],
+                self.debug_config["log_in_file"],
+                self.debug_config["clear_old_log"]
+            )
 
     def clear(self) -> None:
         """Limpa a playlist."""
