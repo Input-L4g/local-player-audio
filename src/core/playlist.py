@@ -143,11 +143,13 @@ class Playlist:
 
     def add(self, track: Track) -> None:
         """Adiciona uma trilha à playlist."""
+        self._log_handler(f"[add()] Adicionando item na playlist: ({track})", "info")
         self.has_track(track, TrackExistsError(track.path), True)
         if len(self) == 0:
             self.current_index = 0
         self._tracks.append(track)
         self._tracks_ids.append(track.id)
+        self._log_handler(f"[add()] A trilha ({track}) foi adicionada na playlist", "debug")
 
     def pop(self, track_index: int = -1) -> Optional[Track]:
         """
@@ -155,12 +157,13 @@ class Playlist:
 
         Retorna a trilha removida ou None, caso ela não exista.
         """
-        self._log_handler(f"Removendo o index {track_index} da playlist.", "info")
+        self._log_handler(f"[pop()] Removendo o index {track_index} da playlist.", "info")
         if not 0 <= track_index < len(self):
             raise IndexError(
                 f"O index passado ({track_index}) está fora da playlist ({len(self)}).")
         removed_track = self._tracks.pop(track_index)
         self._tracks_ids.remove(removed_track.id)
+        self._log_handler(f"[pop()] O index {track_index} foi removido da playlist.", "debug")
         return removed_track
 
     def remove(self, track: Track) -> Optional[Track]:
@@ -169,11 +172,12 @@ class Playlist:
 
         Retorna a trilha removida ou None.
         """
-        self._log_handler(f"Removendo a trilha ({track}) da playlist.", "info")
+        self._log_handler(f"[remove()] Removendo a trilha ({track}) da playlist.", "info")
         self.has_track(track, TrackNotExistsError(track.path))
         track_index = self._tracks.index(track)
         removed_track = self._tracks.pop(track_index)
         self._tracks_ids.remove(removed_track.id)
+        self._log_handler(f"[remove()] A trilha ({track}) foi removida da playlist.", "debug")
         return removed_track
 
     def get_next(self) -> Optional[Tuple[Track, int]]:
@@ -190,21 +194,20 @@ class Playlist:
         new_index = increment_index(self.current_index, len(self), -1)
         return self[new_index], new_index
 
-    def next(self) -> Optional[Track]:
         """
         Passa para a próxima trilha na playlist.
 
         Retorna a trilha ou None.
         """
-        self._log_handler("Indo para a próxima trilha da playlist.", "info")
+        self._log_handler("[next()] Indo para a próxima trilha da playlist.", "info")
         next_ = self.get_next()
         if self.current_index is None or next_ is None:
             return None
         _, new_index = next_
-        if self.mode == "loop":  # Em 'loop', continua normalmente
+        if self._mode == "loop" or force_next:  # Em 'loop', continua normalmente
             self.current_index = new_index
         # Sem 'loop', fica na mesma trilha
-        self._log_handler(f"Trilha mudada: {self.get_current_track()}", "info")
+        self._log_handler(f"[next()] Trilha mudada para: {self.get_current_track()}", "debug")
         return self.get_current_track()
 
     def previous(self) -> Optional[Track]:
@@ -213,19 +216,19 @@ class Playlist:
 
         Retorna a trilha ou None.
         """
-        self._log_handler("Indo para a trilha anterior da playlist.", "info")
+        self._log_handler("[previous()] Indo para a trilha anterior da playlist.", "info")
         next_ = self.get_previous()
         if self.current_index is None or next_ is None:
             return None
         _, new_index = next_
-        if self.mode == "loop":  # Em 'loop', continua normalmente
             self.current_index = new_index
         # Sem 'loop', fica na mesma trilha
-        self._log_handler(f"Trilha mudada: {self.get_current_track()}", "info")
+        self._log_handler(f"[previous()] Trilha mudada para: ({self.get_current_track()})", "debug")
         return self.get_current_track()
 
+        self._log_handler(f"[mode.setter()] O modo foi alterado para {mode}", "debug")
     def __getitem__(self, index: int) -> Track:
-        self._log_handler(f"Pegando o index {index} da playlist", "debug")
+        self._log_handler(f"[__getitem__] Pegando o index {index} da playlist", "debug")
         return self._tracks[index]
 
     def __contains__(self, other) -> bool:
@@ -234,7 +237,7 @@ class Playlist:
         return other in self._tracks
 
     def __iter__(self) -> Iterator[Track]:
-        self._log_handler("Iterando sob a playlist", "debug")
+        self._log_handler("[__iter__()] Iterando sob a playlist", "debug")
         return iter(self._tracks)
 
     def __len__(self) -> int:
