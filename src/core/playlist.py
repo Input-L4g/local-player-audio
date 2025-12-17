@@ -243,6 +243,13 @@ class Playlist:
         self._mode = mode
         self._log_handler(f"[mode.setter()] O modo foi alterado para {mode}", "debug")
 
+    def __eq__(self, other: Union[List[Track], Tuple[Track, ...], "Playlist"]) -> bool:
+        if isinstance(other, (list, tuple)):
+            return self._tracks == other
+        if isinstance(other, Playlist):
+            return self._tracks == other.get_all()
+        return NotImplemented
+
     def __getitem__(self, index: int) -> Track:
         self._log_handler(f"[__getitem__] Pegando o index {index} da playlist", "debug")
         return self._tracks[index]
