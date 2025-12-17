@@ -222,6 +222,7 @@ class Playlist:
         if self.current_index is None or next_ is None:
             return None
         _, new_index = next_
+        if self._mode == "loop" or force_previous:  # Em 'loop', continua normalmente
             self.current_index = new_index
         # Sem 'loop', fica na mesma trilha
         self._log_handler(f"[previous()] Trilha mudada para: ({self.get_current_track()})", "debug")
