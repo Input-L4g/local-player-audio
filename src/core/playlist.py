@@ -227,7 +227,21 @@ class Playlist:
         self._log_handler(f"[previous()] Trilha mudada para: ({self.get_current_track()})", "debug")
         return self.get_current_track()
 
+    @property
+    def mode(self) -> PlaylistModes:
+        """Modo da reprodução da playlist."""
+        self._log_handler("[mode()] Acessando propriedade 'mode'.", "info")
+        return self._mode
+
+    @mode.setter
+    def mode(self, mode: PlaylistModes) -> None:
+        """Muda o modo de reprodução da playlist."""
+        self._log_handler("[mode.setter()] Alternando o valor do modo", "info")
+        if mode not in PLAYLIST_MODES:
+            raise InvalidPlaylistModeError(mode)
+        self._mode = mode
         self._log_handler(f"[mode.setter()] O modo foi alterado para {mode}", "debug")
+
     def __getitem__(self, index: int) -> Track:
         self._log_handler(f"[__getitem__] Pegando o index {index} da playlist", "debug")
         return self._tracks[index]
