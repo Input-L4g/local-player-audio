@@ -11,8 +11,11 @@ from src.utils.files_utils import clear_file
 formatter = Formatter(
     "[%(asctime)s] [%(levelname)s] (%(name)s): %(message)s"
 )
-file_handlers = {}
-logger_has_cleared_file = {}
+DEFAULT_STREAM_HANDLER = StreamHandler()
+DEFAULT_STREAM_HANDLER.setFormatter(formatter)
+
+# file_handlers = {}
+logger_files = {}
 
 def _output_folder(filename: str) -> str:
     path = Path(LOGGING_PATH_OUTPUT) / filename
