@@ -2,6 +2,7 @@
 Esse módulo contém as tipagens estáticas usadas
 em todo a aplicação.
 """
+from typing import TypedDict, Literal, Optional, TypeAlias, Union, Tuple
 from pathlib import Path
 
 PathType: TypeAlias = Union[str, Path]
@@ -58,3 +59,21 @@ PlaylistModes = Literal[
 ]
 
 LoggingLevel = Literal["info", "debug", "warning", "error", "critical"]
+
+class PlaylistDebugOptions(TypedDict, total=False):
+    """
+    Representa um dicionário tipado com as opções
+    de debug da classe Playlist.
+    """
+    log_in_file: bool
+    clear_old_log: bool
+    allowed_logging_levels: Tuple[LoggingLevel, ...]
+
+class PlaylistDebugConfig(TypedDict):
+    """
+    Representa um dicionário tipado com as opções
+    de debug da classe Playlist.
+    """
+    log_in_file: bool
+    clear_old_log: bool
+    allowed_logging_levels: Tuple[LoggingLevel, ...]
