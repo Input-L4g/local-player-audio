@@ -118,11 +118,16 @@ class Playlist:
             return [tracks_by_id[id_] for id_ in self._tracks_ids]
         return tracks
 
-    def has_track(self, track: Track, raises: Optional[Exception] = None) -> bool:
+    def has_track(
+        self,
+        track: Track,
+        raises: Optional[Exception] = None,
+        raises_if: bool = False
+    ) -> bool:
         """Verifica se tem uma trilha na playlist."""
         self._log_handler(f"Verificando a trilha ({track}) (raise: {raises})", "debug")
         result = track in self
-        if raises is not None and result is False:
+        if raises is not None and result is raises_if:
             raise raises
         return result
 
@@ -138,8 +143,9 @@ class Playlist:
 
     def add(self, track: Track) -> None:
         """Adiciona uma trilha à playlist."""
-        self._log_handler(f"Adicionando item na playlist: ({track})", "info")
-        self.has_track(track, TrackExistsError(track.path))
+        self.has_track(track, TrackExistsError(track.path), True)
+        if len(self) == 0:
+            self.current_index = 0
         self._tracks.append(track)
         self._tracks_ids.append(track.id)
 
