@@ -211,7 +211,7 @@ class Playlist:
         self._log_handler(f"[next()] Trilha mudada para: {self.get_current_track()}", "debug")
         return self.get_current_track()
 
-    def previous(self) -> Optional[Track]:
+    def previous(self, force_previous: bool = False) -> Optional[Track]:
         """
         Passa para a trilha anterior da atual na playlist.
 
