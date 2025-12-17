@@ -66,3 +66,5 @@ LOGGING_SCOPES = {
 }
 
 LOGGING_PATH_OUTPUT= "./log"
+
+PLAYLIST_MODES = ("loop", "one_repeat")
